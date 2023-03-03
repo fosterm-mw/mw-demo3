@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: pubsub-simple
+spec:
+  template:
+    serviceAccountName: events-workload
+  dependencies:
+  - name: payload
+    eventSourceName: pubsub-source
+    eventName: pubsub-event
+  triggers:
+  - template:
+      name: gcloud-bq-load
+      k8s:
+        group: ""
+        version: v1
+        resource: pods
+        operation: create
+        source:
+          resource:
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              generateName: gcloud-bq-load-
+              labels:
+                app: gcloud-bq-load
+            spec:
+              containers:
+              - name: gcloud
+                image: google/cloud-sdk:latest
+                command: ["/scripts/wrapper.sh"]
+                volumeMounts:
+                  - mountPath: /scripts
+                    name: wrapper
+              volumes :
+              - name : wrapper
+                configMap:
+                  name: wrapper
+                  defaultMode: 0744
+              serviceAccountName: $KSA
+              restartPolicy: Never

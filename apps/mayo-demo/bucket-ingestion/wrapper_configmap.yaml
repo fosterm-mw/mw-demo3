@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  wrapper.sh: "#!/bin/bash\n\n#create configmap first\n#kubectl create configmap wrapper
+    --from-file=wrapper.sh\n\nbq load --autodetect \\\n--source_format=CSV \\\n$DATASET_NAME.ccp_demo_username_tb
+    \\\ngs://mayo-demo-2852fn/username.csv \n"
+kind: ConfigMap
+metadata:
+  name: wrapper

@@ -1,0 +1,12 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: pubsub-source
+spec:
+   template:
+     serviceAccountName: events-workload
+   pubSub:
+     pubsub-event:
+       jsonBody: true
+       projectID: mayo-demo-2852fn
+       topic: mayo-demo
